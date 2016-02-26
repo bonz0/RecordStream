@@ -14,7 +14,8 @@ BEGIN {
 # parsedate to ensure they're working correctly, not test Time::ParseDate's
 # functionality which is proven elsewhere.
 
-subtest 'Timezones' => sub {
+note 'Timezones';
+{
   my @args = qw[ -k when --format %T ];
 
   App::RecordStream::Test::OperationHelper->do_match(
@@ -48,9 +49,10 @@ subtest 'Timezones' => sub {
     '{"when":"21:51:47"}',
     "Feb 23 21:51:47 2016 (with --tz UTC) is 21:51:47 UTC",
   );
-};
+}
 
-subtest 'MDY vs DMY' => sub {
+note 'MDY vs DMY';
+{
   App::RecordStream::Test::OperationHelper->do_match(
     'parsedate',
     [qw[ -k when --format %F ]],
@@ -68,7 +70,8 @@ subtest 'MDY vs DMY' => sub {
   );
 };
 
-subtest '--relative: Friday' => sub {
+note '--relative: Friday';
+{
   my @relative = qw[ --relative -k when --format %F --now 1456293091 ]; # Tue Feb 23 21:51:47 PST 2016
 
   App::RecordStream::Test::OperationHelper->do_match(
@@ -102,9 +105,10 @@ subtest '--relative: Friday' => sub {
     '{"when":"2016-02-27"}',
     "Friday is 2016-02-27 with --future --gmtime",
   );
-};
+}
 
-subtest '--relative: +2d' => sub {
+note '--relative: +2d';
+{
   my @relative = qw[ --relative -k when --format %F --now 1456293091 ]; # Tue Feb 23 21:51:47 PST 2016
 
   App::RecordStream::Test::OperationHelper->do_match(
@@ -130,6 +134,6 @@ subtest '--relative: +2d' => sub {
     '{"when":"2016-02-25"}',
     "Friday is 2016-02-25 with --past",
   );
-};
+}
 
 done_testing;
