@@ -82,8 +82,8 @@ sub usage {
     ['future',               'Assume ambiguous years and days of the week are in the future'],
     ['timezone|tz <zone>',   'Assume ambiguous datetimes are in the given timezone (defaults to the local TZ)'],
     ['relative',             'Try to parse relative dates and times (e.g. 1 hour ago)'],
-    ['localtime',            'Output formatted datetimes in localtime (the default)'],
-    ['gmtime',               'Output formatted datetimes in GMT'],
+    ['localtime',            'Convert datetimes to localtime for output (the default)'],
+    ['gmtime',               'Convert datetimes to GMT for output'],
     ['now <integer>',        'Set the "current time" for relative datetimes, as seconds since the epoch (rarely needed)'],
   ];
   my $args_string = $this->options_string($options);
