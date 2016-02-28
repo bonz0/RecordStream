@@ -7,12 +7,45 @@ use App::RecordStream::Operation::parsedate;
 
 BEGIN {
   # Normalize localtime for testing
-  $ENV{TZ} = 'US/Pacific';
+  $ENV{TZ}      = 'US/Pacific';
+
+  # This may cause warnings if en_US isn't available on a system running these
+  # tests, but it's the only way to standardize testing for --pretty.
+  $ENV{LC_TIME} = 'en_US';
 }
 
 # These tests aim to exercise the interplay of recs-provided options to
 # parsedate to ensure they're working correctly, not test Time::ParseDate's
 # functionality which is proven elsewhere.
+
+note 'Formatting presets';
+{
+  my @args = qw[ -k when --tz UTC ];
+
+  App::RecordStream::Test::OperationHelper->do_match(
+    'parsedate',
+    [@args, qw[ --iso ]],
+    '{"when":"2016-02-28 18:45:18"}',
+    '{"when":"2016-02-28T10:45:18-0800"}',
+    "--iso: 2016-02-28 18:45:18 is 2016-02-28T10:45:18-0800",
+  );
+
+  App::RecordStream::Test::OperationHelper->do_match(
+    'parsedate',
+    [@args, qw[ --epoch ]],
+    '{"when":"2016-02-28 18:45:18"}',
+    '{"when":"1456685118"}',
+    "--epoch 2016-02-28 18:45:18 is 1456685118",
+  );
+
+  App::RecordStream::Test::OperationHelper->do_match(
+    'parsedate',
+    [@args, qw[ --pretty ]],
+    '{"when":"2016-02-28 18:45:18"}',
+    '{"when":"Sun 28 Feb 2016 10:45:18 AM PST"}',
+    "--pretty 2016-02-28 18:45:18 is Sun 28 Feb 2016 10:45:18 AM PST",
+  );
+}
 
 note 'Timezones';
 {

@@ -23,6 +23,9 @@ sub init {
   my $options = {
     'key|k=s'       => sub { $this->{'KEYS'}->add_groups($_[1]) },
     'format|f=s'    => \($this->{'FORMAT'}),
+    'iso|iso8601'   => sub { $this->{'FORMAT'} = '%FT%T%z' },
+    'epoch'         => sub { $this->{'FORMAT'} = '%s' },
+    'pretty'        => sub { $this->{'FORMAT'} = '%c' },
     'dmy'           => \($this->{'UK'}),
     'past'          => \($this->{'PAST'}),
     'future'        => \($this->{'FUTURE'}),
@@ -34,8 +37,11 @@ sub init {
   };
   $this->parse_options($args, $options);
 
-  die "--key is required\n"    unless $this->{'KEYS'}->has_any_group;
-  die "--format is required\n" unless defined $this->{'FORMAT'};
+  die "--key is required\n"
+    unless $this->{'KEYS'}->has_any_group;
+
+  die "--format (or one of --iso, --epoch, or --pretty) is required\n"
+    unless defined $this->{'FORMAT'};
 }
 
 sub accept_record {
@@ -77,6 +83,9 @@ sub usage {
   my $options = [
     ['key|-k <keys>',        'Datetime keys to parse and reformat; may be a key spec or key group.  Required.'],
     ['format|-f <strftime>', 'Format string for strftime(3).  Required.'],
+    ['iso|--iso8601',        'Output datetimes as an ISO 8601 timestamp (equivalent to -f %FT%T%z)'],
+    ['epoch',                'Output datetimes as the number of seconds since the epoch (equivalent to -f %s)'],
+    ['pretty',               'Output datetimes in the locale-preferred format (equivalent to -f %c)'],
     ['dmy',                  'Assume dd/mm (UK-style) instead of mm/dd (US-style)'],
     ['past',                 'Assume ambiguous years and days of the week are in the past'],
     ['future',               'Assume ambiguous years and days of the week are in the future'],
